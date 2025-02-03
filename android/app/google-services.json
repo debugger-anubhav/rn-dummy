@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "394519220140",
+    "project_id": "rn-dummy-74057",
+    "storage_bucket": "rn-dummy-74057.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:394519220140:android:43fb00123c33845bfab409",
+        "android_client_info": {
+          "package_name": "com.dummy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQA5FdXUPfxpXAgM9LLmxrbDkNbmgZj6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
