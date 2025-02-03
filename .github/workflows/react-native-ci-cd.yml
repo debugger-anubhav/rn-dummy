@@ -34,10 +34,9 @@ jobs:
           ./gradlew assembleRelease
 
       - name: Authenticate with Firebase
-        run:
+        run: |
           echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}' > $HOME/service-account.json
           echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/service-account.json" >> $GITHUB_ENV
-          # export GOOGLE_APPLICATION_CREDENTIALS=$PWD/service-account.json
 
       - name: Upload APK to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
