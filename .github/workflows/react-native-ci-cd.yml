@@ -1,0 +1,91 @@
+name: React Native CI/CD
+
+on:
+  push:
+    branches:
+      - '**' # Runs on every branch
+
+jobs:
+  android-build:
+    name: Build & Upload Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run:
+          npm install
+
+      - name: Set up Java & Gradle
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - name: Build Android APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload APK to Firebase
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          token: ${{ secrets.FIREBASE_AUTH_TOKEN }}
+          groups: testers
+          file: android/app/build/outputs/apk/release/app-release.apk
+
+  # ios-build:
+  #   name: Build & Upload iOS IPA
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: 18
+
+  #     - name: Install Dependencies
+  #       run: |
+  #         npm install
+  #         npx pod-install
+
+  #     - name: Set up Xcode
+  #       run: sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+
+  #     - name: Decode Signing Certificate
+  #       run: |
+  #         echo "${{ secrets.IOS_CERTIFICATE_BASE64 }}" | base64 --decode > ios_cert.p12
+  #         echo "${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}" | base64 --decode > ios.mobileprovision
+
+  #     - name: Build IPA
+  #       env:
+  #         APP_NAME: "YourApp"
+  #       run: |
+  #         xcodebuild -workspace ios/${APP_NAME}.xcworkspace \
+  #           -scheme ${APP_NAME} \
+  #           -sdk iphoneos \
+  #           -configuration Release \
+  #           -archivePath ${APP_NAME}.xcarchive \
+  #           archive
+
+  #         xcodebuild -exportArchive \
+  #           -archivePath ${APP_NAME}.xcarchive \
+  #           -exportPath ./build \
+  #           -exportOptionsPlist ios/exportOptions.plist
+
+  #     - name: Upload IPA to Diawi
+  #       run: |
+  #         curl -X POST https://upload.diawi.com/ \
+  #         -F token=${{ secrets.DIAWI_API_TOKEN }} \
+  #         -F file=@./build/${APP_NAME}.ipa \
+  #         -F wall_of_apps=true \
+  #         -F callback_emails="your_email@example.com"
